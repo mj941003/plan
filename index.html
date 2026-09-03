@@ -471,6 +471,7 @@
   }
   .checklist-add input{
     flex:1;
+    min-width:0;
     border:1px solid var(--line);
     background:var(--surface-alt);
     padding:10px 11px;
@@ -483,7 +484,7 @@
     outline:2px solid var(--indigo);
     outline-offset:-1px;
   }
-  .checklist-add .btn{ flex:none; padding:0 18px; }
+  .checklist-add .btn{ flex:none; flex-shrink:0; padding:0 16px; }
 
   /* expenses */
   .total-card{
@@ -626,6 +627,7 @@
   }
   .p-row input{
     flex:1;
+    min-width:0;
     border:1px solid var(--line);
     padding:9px 10px;
     font-size:14px;
