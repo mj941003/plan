@@ -1,0 +1,1309 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
+<title>히로시마 2박 3일</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#FFFFFF;
+    --surface:#FFFFFF;
+    --surface-alt:#F7F7F7;
+    --ink:#1A1A1A;
+    --ink-soft:#9C9C9C;
+    --torii:#1A1A1A;
+    --torii-soft:#F0F0F0;
+    --indigo:#1A1A1A;
+    --indigo-soft:#F0F0F0;
+    --gold:#9C9C9C;
+    --gold-soft:#F0F0F0;
+    --line:#EAEAEA;
+    --danger:#1A1A1A;
+  }
+  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--bg);
+    color:var(--ink);
+    font-family:'Noto Sans KR',-apple-system,'Apple SD Gothic Neo','Malgun Gothic',sans-serif;
+    font-size:15px;
+    line-height:1.5;
+    min-height:100vh;
+    display:flex;
+    justify-content:center;
+  }
+  #app{
+    width:100%;
+    max-width:480px;
+    min-height:100vh;
+    background:var(--bg);
+    display:flex;
+    flex-direction:column;
+    position:relative;
+    padding-bottom:76px;
+  }
+
+  /* header */
+  header{
+    padding:28px 20px 18px;
+    border-bottom:1px solid var(--line);
+    background:var(--surface);
+  }
+  .trip-title{
+    font-family:'Noto Sans KR',-apple-system,'Apple SD Gothic Neo','Malgun Gothic',sans-serif;
+    font-weight:700;
+    font-size:26px;
+    letter-spacing:-0.01em;
+    display:flex;
+    align-items:baseline;
+    gap:8px;
+  }
+  .trip-title .leaf{ font-size:20px; }
+  .trip-dates{
+    margin-top:6px;
+    color:var(--ink-soft);
+    font-size:13.5px;
+  }
+  .trip-dates b{ color:var(--torii); font-weight:700; }
+
+  /* day tabs */
+  .day-tabs{
+    display:flex;
+    gap:6px;
+    padding:14px 20px 0;
+    background:var(--surface);
+  }
+  .day-tab{
+    flex:1;
+    text-align:center;
+    padding:10px 4px 12px;
+    font-size:13.5px;
+    font-weight:500;
+    color:var(--ink-soft);
+    border-bottom:2px solid transparent;
+    cursor:pointer;
+    background:none;
+    border-left:none;border-right:none;border-top:none;
+    font-family:inherit;
+  }
+  .day-tab .d{ display:block; font-size:11.5px; margin-top:2px; opacity:0.75;}
+  .day-tab.active{
+    color:var(--torii);
+    border-bottom-color:var(--torii);
+    font-weight:700;
+  }
+
+  main{ flex:1; padding:18px 20px 24px; }
+  section.panel{ display:none; }
+  section.panel.active{ display:block; }
+
+  /* section heading */
+  .section-head{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    margin-bottom:14px;
+  }
+  .section-head h2{
+    font-family:'Noto Sans KR',-apple-system,'Apple SD Gothic Neo','Malgun Gothic',sans-serif;
+    font-size:17px;
+    font-weight:700;
+    margin:0;
+  }
+  .head-sub{ font-size:12.5px; color:var(--ink-soft); }
+
+  /* timeline (itinerary) */
+  .timeline{ position:relative; padding-left:2px; }
+  .t-item{
+    display:flex;
+    gap:14px;
+    position:relative;
+    padding-bottom:20px;
+  }
+  .t-item .t-rail{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    width:14px;
+    flex-shrink:0;
+  }
+  .t-item .dot{
+    width:9px;height:9px;border-radius:50%;
+    background:var(--torii);
+    margin-top:6px;
+    flex-shrink:0;
+  }
+  .t-item .line{
+    flex:1;
+    width:1px;
+    background:var(--line);
+    margin-top:4px;
+  }
+  .t-item:last-child .line{ display:none; }
+  .t-body{ flex:1; min-width:0; padding-bottom:2px; }
+  .t-attach-col{
+    flex-shrink:0;
+    display:flex;
+    flex-direction:column;
+    gap:6px;
+    align-items:flex-end;
+  }
+  .attach-thumb{
+    width:52px; height:52px;
+    border:1px solid var(--line);
+    border-radius:2px;
+    object-fit:cover;
+    display:block;
+    cursor:pointer;
+    background:var(--surface-alt);
+  }
+  .attach-thumb.pdf{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:10.5px;
+    font-weight:700;
+    color:var(--ink-soft);
+    letter-spacing:0.02em;
+  }
+  .t-time{
+    font-size:12.5px;
+    font-weight:700;
+    color:var(--torii);
+    font-variant-numeric:tabular-nums;
+  }
+  .t-title{
+    font-size:15.5px;
+    font-weight:500;
+    margin-top:2px;
+    word-break:break-word;
+  }
+  .t-memo{
+    font-size:13px;
+    color:var(--ink-soft);
+    margin-top:3px;
+    word-break:break-word;
+    white-space:pre-wrap;
+  }
+  .t-actions{
+    display:flex;
+    gap:14px;
+    margin-top:4px;
+  }
+  .t-edit{
+    background:none;border:none;
+    color:var(--ink);
+    font-size:12px;
+    padding:0;
+    cursor:pointer;
+    text-decoration:underline;
+  }
+  .t-del{
+    background:none;border:none;
+    color:var(--ink-soft);
+    font-size:12px;
+    padding:0;
+    cursor:pointer;
+    text-decoration:underline;
+  }
+  .t-map{
+    display:inline-block;
+    margin-top:6px;
+    font-size:12.5px;
+    color:var(--ink);
+    text-decoration:none;
+    border:1px solid var(--line);
+    padding:4px 9px;
+    border-radius:2px;
+  }
+  .t-map:active{ background:var(--surface-alt); }
+
+  .empty{
+    text-align:center;
+    color:var(--ink-soft);
+    font-size:13.5px;
+    padding:36px 12px;
+    border:1px dashed var(--line);
+    border-radius:2px;
+  }
+
+  /* add button / form */
+  .add-btn{
+    width:100%;
+    padding:13px;
+    margin-top:6px;
+    background:var(--surface);
+    border:1px solid var(--line);
+    color:var(--torii);
+    font-weight:700;
+    font-size:14px;
+    font-family:inherit;
+    cursor:pointer;
+  }
+  .add-btn:active{ background:var(--torii-soft); }
+
+  .form-card{
+    margin-top:12px;
+    padding:16px;
+    background:var(--surface);
+    border:1px solid var(--line);
+  }
+  .form-row{ margin-bottom:12px; }
+  .form-row:last-child{ margin-bottom:0; }
+  .form-row label{
+    display:block;
+    font-size:12.5px;
+    color:var(--ink-soft);
+    margin-bottom:5px;
+    font-weight:500;
+  }
+  .form-row input[type=text],
+  .form-row input[type=number],
+  .form-row input[type=time],
+  .form-row select,
+  .form-row textarea{
+    width:100%;
+    border:1px solid var(--line);
+    background:var(--surface-alt);
+    padding:10px 11px;
+    font-size:14.5px;
+    color:var(--ink);
+    font-family:inherit;
+    border-radius:2px;
+  }
+  .form-row textarea{ resize:vertical; min-height:52px; }
+  .form-row input:focus, .form-row select:focus, .form-row textarea:focus{
+    outline:2px solid var(--indigo);
+    outline-offset:-1px;
+  }
+  .two-col{ display:flex; gap:10px; }
+  .two-col > div{ flex:1; }
+
+  .time-input{
+    display:flex;
+    align-items:center;
+    gap:8px;
+  }
+  .time-input input{
+    width:64px;
+    border:1px solid var(--line);
+    background:var(--surface-alt);
+    padding:10px 0;
+    font-size:16px;
+    text-align:center;
+    color:var(--ink);
+    font-family:inherit;
+    font-variant-numeric:tabular-nums;
+    border-radius:2px;
+  }
+  .time-input input:focus{
+    outline:2px solid var(--indigo);
+    outline-offset:-1px;
+  }
+  .time-input .time-colon{
+    font-size:16px;
+    font-weight:700;
+    color:var(--ink-soft);
+  }
+  /* hide native spinner for a cleaner look */
+  .time-input input::-webkit-outer-spin-button,
+  .time-input input::-webkit-inner-spin-button{ -webkit-appearance:none; margin:0; }
+  .time-input input[type=number]{ -moz-appearance:textfield; }
+
+  .chip-group{ display:flex; flex-wrap:wrap; gap:7px; }
+  .chip{
+    padding:7px 12px;
+    border:1px solid var(--line);
+    font-size:13px;
+    cursor:pointer;
+    background:var(--surface-alt);
+    color:var(--ink);
+  }
+  .chip.on{
+    background:var(--indigo);
+    border-color:var(--indigo);
+    color:#fff;
+  }
+
+  .file-picker{
+    display:block;
+    width:100%;
+    border:1px dashed var(--line);
+    background:var(--surface-alt);
+    padding:12px;
+    font-size:13px;
+    color:var(--ink-soft);
+    text-align:center;
+    cursor:pointer;
+  }
+  .file-picker input{ display:none; }
+  .attach-preview{
+    display:flex;
+    flex-wrap:wrap;
+    gap:8px;
+    margin-top:10px;
+  }
+  .attach-preview-item{
+    position:relative;
+    width:56px; height:56px;
+  }
+  .attach-preview-item img,
+  .attach-preview-item .ph-pdf{
+    width:56px; height:56px;
+    border:1px solid var(--line);
+    border-radius:2px;
+    object-fit:cover;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:10.5px;
+    font-weight:700;
+    color:var(--ink-soft);
+    background:#fff;
+  }
+  .attach-preview-item .rm{
+    position:absolute;
+    top:-6px; right:-6px;
+    width:18px; height:18px;
+    border-radius:50%;
+    background:var(--ink);
+    color:#fff;
+    border:none;
+    font-size:11px;
+    line-height:18px;
+    text-align:center;
+    padding:0;
+    cursor:pointer;
+  }
+  .attach-hint{
+    font-size:11.5px;
+    color:var(--ink-soft);
+    margin-top:6px;
+  }
+
+  .form-actions{
+    display:flex;
+    gap:8px;
+    margin-top:14px;
+  }
+  .btn{
+    flex:1;
+    padding:11px;
+    font-size:14px;
+    font-weight:700;
+    font-family:inherit;
+    border:1px solid var(--line);
+    background:var(--surface);
+    color:var(--ink);
+    cursor:pointer;
+  }
+  .btn.primary{
+    background:var(--torii);
+    border-color:var(--torii);
+    color:#fff;
+  }
+  .btn.ghost{ color:var(--ink-soft); }
+
+  /* expenses */
+  .total-card{
+    background:var(--surface-alt);
+    border:1px solid var(--line);
+    color:var(--ink);
+    padding:18px 18px;
+    margin-bottom:16px;
+    display:flex;
+    justify-content:space-between;
+    align-items:baseline;
+  }
+  .total-card .label{ font-size:13px; opacity:0.6; }
+  .total-card .amount{
+    font-family:'Noto Sans KR',-apple-system,'Apple SD Gothic Neo','Malgun Gothic',sans-serif;
+    font-size:22px;
+    font-weight:700;
+    font-variant-numeric:tabular-nums;
+  }
+  .exp-list{ border-top:1px solid var(--line); }
+  .exp-row{
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-start;
+    gap:10px;
+    padding:13px 2px;
+    border-bottom:1px solid var(--line);
+  }
+  .exp-main{ min-width:0; }
+  .exp-item{ font-size:14.5px; font-weight:500; word-break:break-word; }
+  .exp-meta{ font-size:12px; color:var(--ink-soft); margin-top:3px; }
+  .exp-right{ text-align:right; flex-shrink:0; }
+  .exp-amount{ font-size:14.5px; font-weight:700; font-variant-numeric:tabular-nums; }
+  .exp-del{
+    display:block;
+    margin-top:4px;
+    background:none;border:none;
+    color:var(--ink-soft);
+    font-size:11.5px;
+    cursor:pointer;
+    text-decoration:underline;
+    padding:0;
+  }
+
+  /* settlement */
+  .people-edit{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:16px;
+    font-size:13px;
+    color:var(--ink-soft);
+  }
+  .people-edit button{
+    background:none;border:none;
+    color:var(--indigo);
+    font-weight:700;
+    font-size:13px;
+    cursor:pointer;
+    text-decoration:underline;
+    padding:0;
+  }
+  .balance-row{
+    padding:12px 0;
+    border-bottom:1px solid var(--line);
+  }
+  .balance-top{
+    display:flex;
+    justify-content:space-between;
+    font-size:14.5px;
+    margin-bottom:7px;
+  }
+  .balance-top .name{ font-weight:700; }
+  .balance-top .val{ font-variant-numeric:tabular-nums; font-weight:700; }
+  .balance-top .val.plus{ color:var(--ink); }
+  .balance-top .val.minus{ color:var(--ink-soft); }
+  .bar-track{
+    height:6px;
+    background:var(--line);
+    position:relative;
+    overflow:hidden;
+  }
+  .bar-fill{ height:100%; position:absolute; top:0; }
+  .bar-fill.plus{ background:var(--ink); left:50%; }
+  .bar-fill.minus{ background:var(--ink-soft); right:50%; }
+
+  .settle-title{
+    font-family:'Noto Sans KR',-apple-system,'Apple SD Gothic Neo','Malgun Gothic',sans-serif;
+    font-size:15px;
+    font-weight:700;
+    margin:22px 0 10px;
+  }
+  .settle-arrow{
+    display:flex;
+    align-items:center;
+    gap:9px;
+    padding:12px 14px;
+    background:var(--surface);
+    border:1px solid var(--line);
+    margin-bottom:8px;
+    font-size:14px;
+  }
+  .settle-arrow .arw{ color:var(--gold); font-weight:700; }
+  .settle-arrow b{ font-weight:700; }
+  .settle-arrow .amt{
+    margin-left:auto;
+    font-weight:700;
+    font-variant-numeric:tabular-nums;
+    color:var(--torii);
+  }
+
+  /* participant modal */
+  .modal-backdrop{
+    position:fixed; inset:0;
+    background:rgba(42,36,32,0.45);
+    display:none;
+    align-items:flex-end;
+    justify-content:center;
+    z-index:50;
+  }
+  .modal-backdrop.show{ display:flex; }
+  .modal{
+    width:100%;
+    max-width:480px;
+    background:var(--surface);
+    padding:20px 20px 26px;
+    max-height:80vh;
+    overflow-y:auto;
+  }
+  .modal h3{
+    font-family:'Noto Sans KR',-apple-system,'Apple SD Gothic Neo','Malgun Gothic',sans-serif;
+    font-size:17px;
+    margin:0 0 14px;
+  }
+  .p-row{
+    display:flex;
+    gap:8px;
+    margin-bottom:8px;
+    align-items:center;
+  }
+  .p-row input{
+    flex:1;
+    border:1px solid var(--line);
+    padding:9px 10px;
+    font-size:14px;
+    font-family:inherit;
+    background:var(--surface-alt);
+  }
+  .p-row button{
+    background:none;
+    border:none;
+    color:var(--torii);
+    font-size:13px;
+    cursor:pointer;
+    padding:4px 6px;
+  }
+
+  /* bottom nav */
+  nav.bottom-nav{
+    position:fixed;
+    bottom:0; left:50%;
+    transform:translateX(-50%);
+    width:100%;
+    max-width:480px;
+    display:flex;
+    background:var(--surface);
+    border-top:1px solid var(--line);
+    padding-bottom:env(safe-area-inset-bottom);
+  }
+  nav.bottom-nav button{
+    flex:1;
+    padding:12px 4px 10px;
+    background:none;
+    border:none;
+    font-family:inherit;
+    color:var(--ink-soft);
+    font-size:11.5px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:4px;
+    cursor:pointer;
+  }
+  nav.bottom-nav button .ic{ font-size:19px; }
+  nav.bottom-nav button.active{ color:var(--torii); font-weight:700; }
+
+  .loading{
+    padding:60px 20px;
+    text-align:center;
+    color:var(--ink-soft);
+    font-size:13.5px;
+  }
+</style>
+</head>
+<body>
+<div id="app">
+
+  <header>
+    <div class="trip-title"><span>히로시마</span><span class="leaf">🍁</span></div>
+    <div class="trip-dates"><b>11.9(월)</b> – 11.11(수) · 2박 3일</div>
+  </header>
+
+  <!-- ITINERARY PANEL -->
+  <section class="panel active" id="panel-itinerary">
+    <div class="day-tabs" id="dayTabs"></div>
+    <main>
+      <div class="section-head">
+        <h2 id="dayHeading">Day 1 일정</h2>
+        <span class="head-sub" id="dayCount"></span>
+      </div>
+      <div class="timeline" id="timeline"></div>
+      <button class="add-btn" id="btnAddItem">+ 일정 추가</button>
+      <div class="form-card" id="itemForm" style="display:none;">
+        <div class="two-col">
+          <div class="form-row">
+            <label>출발 시간 (24시간)</label>
+            <div class="time-input">
+              <input type="number" id="f-from-hour" min="0" max="23" placeholder="09" inputmode="numeric">
+              <span class="time-colon">:</span>
+              <input type="number" id="f-from-min" min="0" max="59" placeholder="00" inputmode="numeric">
+            </div>
+          </div>
+          <div class="form-row">
+            <label>도착 시간 (선택)</label>
+            <div class="time-input">
+              <input type="number" id="f-to-hour" min="0" max="23" placeholder="09" inputmode="numeric">
+              <span class="time-colon">:</span>
+              <input type="number" id="f-to-min" min="0" max="59" placeholder="40" inputmode="numeric">
+            </div>
+          </div>
+        </div>
+        <div class="form-row">
+          <label>출발지 (선택)</label>
+          <input type="text" id="f-from" placeholder="예: 호텔">
+        </div>
+        <div class="form-row">
+          <label>도착지</label>
+          <input type="text" id="f-to" placeholder="예: 미야지마 이츠쿠시마 신사">
+        </div>
+        <div class="form-row">
+          <label>메모 (선택)</label>
+          <textarea id="f-memo" placeholder="교통편, 준비물, 팁 등"></textarea>
+        </div>
+        <div class="form-row">
+          <label>첨부파일 (선택)</label>
+          <label class="file-picker" for="f-files">
+            📎 항공권 · 숙박 확인서 등 이미지/PDF 첨부
+            <input type="file" id="f-files" accept="image/*,.pdf,application/pdf" multiple>
+          </label>
+          <div class="attach-preview" id="f-attach-preview"></div>
+          <div class="attach-hint">이미지는 자동으로 용량을 줄여 저장돼요. 큰 PDF는 저장이 안 될 수 있어요.</div>
+        </div>
+        <div class="form-actions">
+          <button class="btn ghost" id="f-cancel">취소</button>
+          <button class="btn primary" id="f-save">저장</button>
+        </div>
+      </div>
+
+    </main>
+  </section>
+
+  <!-- EXPENSE PANEL -->
+  <section class="panel" id="panel-expense">
+    <main>
+      <div class="total-card">
+        <span class="label">총 지출</span>
+        <span class="amount" id="totalAmount">¥0</span>
+      </div>
+      <div class="section-head">
+        <h2>경비 내역</h2>
+        <span class="head-sub" id="expCount"></span>
+      </div>
+      <div class="exp-list" id="expList"></div>
+      <button class="add-btn" id="btnAddExp">+ 경비 추가</button>
+      <div class="form-card" id="expForm" style="display:none;">
+        <div class="two-col">
+          <div class="form-row">
+            <label>날짜</label>
+            <select id="e-day">
+              <option value="1">11.9 (Day1)</option>
+              <option value="2">11.10 (Day2)</option>
+              <option value="3">11.11 (Day3)</option>
+            </select>
+          </div>
+          <div class="form-row" style="flex:2;">
+            <label>항목</label>
+            <input type="text" id="e-item" placeholder="예: 오코노미야키">
+          </div>
+        </div>
+        <div class="form-row">
+          <label>금액 (¥)</label>
+          <input type="number" id="e-amount" placeholder="0" inputmode="numeric">
+        </div>
+        <div class="form-row">
+          <label>결제한 사람</label>
+          <select id="e-payer"></select>
+        </div>
+        <div class="form-row">
+          <label>나눌 인원</label>
+          <div class="chip-group" id="e-split"></div>
+        </div>
+        <div class="form-actions">
+          <button class="btn ghost" id="e-cancel">취소</button>
+          <button class="btn primary" id="e-save">저장</button>
+        </div>
+      </div>
+    </main>
+  </section>
+
+  <!-- SETTLEMENT PANEL -->
+  <section class="panel" id="panel-settle">
+    <main>
+      <div class="people-edit">
+        <span id="peopleList">인원: -</span>
+        <button id="btnEditPeople">인원 편집</button>
+      </div>
+
+      <div class="section-head"><h2>정산 현황</h2></div>
+      <div id="balanceList"></div>
+
+      <div class="settle-title">송금 안내</div>
+      <div id="settleList"></div>
+    </main>
+  </section>
+
+  <nav class="bottom-nav">
+    <button class="nav-btn active" data-tab="itinerary"><span class="ic">🗓</span>일정</button>
+    <button class="nav-btn" data-tab="expense"><span class="ic">💴</span>경비</button>
+    <button class="nav-btn" data-tab="settle"><span class="ic">🧮</span>정산</button>
+  </nav>
+</div>
+
+<div class="modal-backdrop" id="peopleModal">
+  <div class="modal">
+    <h3>인원 편집</h3>
+    <div id="peopleRows"></div>
+    <button class="add-btn" id="btnAddPerson" style="margin-top:4px;">+ 인원 추가</button>
+    <div class="form-actions">
+      <button class="btn primary" id="peopleDone" style="flex:none; width:100%;">완료</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const STORAGE_KEY = 'hiroshima-trip-2026-11';
+let state = {
+  participants: [{id:'p1', name:'나'}],
+  itinerary: {1:[], 2:[], 3:[]},
+  expenses: []
+};
+let loaded = false;
+let currentDay = 1;
+let currentTab = 'itinerary';
+let editingItemId = null;
+let pendingAttachments = [];
+
+const DAY_LABELS = {1:'11.9', 2:'11.10', 3:'11.11'};
+const DAY_WEEK = {1:'월', 2:'화', 3:'수'};
+
+function uid(){ return Math.random().toString(36).slice(2,9); }
+function yen(n){ return '¥' + Math.round(n).toLocaleString('ja-JP'); }
+
+async function loadState(){
+  try{
+    const res = await window.storage.get(STORAGE_KEY, false);
+    if(res && res.value){
+      const parsed = JSON.parse(res.value);
+      state = Object.assign(state, parsed);
+      if(!state.itinerary[1]) state.itinerary = {1:[],2:[],3:[], ...state.itinerary};
+    }
+  }catch(e){
+    // no saved data yet, keep defaults
+  }
+  loaded = true;
+  renderAll();
+}
+
+let saveTimer = null;
+function saveState(){
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(async ()=>{
+    try{
+      await window.storage.set(STORAGE_KEY, JSON.stringify(state), false);
+    }catch(e){
+      console.error('저장 실패', e);
+      alert('저장에 실패했어요. 첨부한 파일 용량이 너무 크면 저장이 안 될 수 있어요. 사진이나 PDF 용량을 줄여서 다시 시도해보세요.');
+    }
+  }, 150);
+}
+
+/* ---------- TAB NAV ---------- */
+document.querySelectorAll('.nav-btn').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    currentTab = btn.dataset.tab;
+    document.querySelectorAll('.nav-btn').forEach(b=>b.classList.toggle('active', b===btn));
+    document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+    document.getElementById('panel-'+currentTab).classList.add('active');
+    if(currentTab==='settle') renderSettlement();
+  });
+});
+
+/* ---------- DAY TABS ---------- */
+function renderDayTabs(){
+  const wrap = document.getElementById('dayTabs');
+  wrap.innerHTML = '';
+  [1,2,3].forEach(d=>{
+    const b = document.createElement('button');
+    b.className = 'day-tab' + (d===currentDay ? ' active':'');
+    b.innerHTML = `Day ${d}<span class="d">${DAY_LABELS[d]} (${DAY_WEEK[d]})</span>`;
+    b.addEventListener('click', ()=>{ currentDay = d; editingItemId=null; clearItemForm(); document.getElementById('itemForm').style.display='none'; renderItinerary(); });
+    wrap.appendChild(b);
+  });
+}
+
+/* ---------- ITINERARY ---------- */
+function renderItinerary(){
+  renderDayTabs();
+  document.getElementById('dayHeading').textContent = `Day ${currentDay} 일정`;
+  const items = (state.itinerary[currentDay] || []).slice().sort((a,b)=> (a.fromTime||a.time||'').localeCompare(b.fromTime||b.time||''));
+  document.getElementById('dayCount').textContent = items.length ? `${items.length}건` : '';
+  const tl = document.getElementById('timeline');
+  tl.innerHTML = '';
+  if(items.length===0){
+    tl.innerHTML = '<div class="empty">아직 등록된 일정이 없어요.<br>아래 버튼으로 추가해보세요.</div>';
+    return;
+  }
+  items.forEach(it=>{
+    const row = document.createElement('div');
+    row.className = 't-item';
+    const mapUrl = directionsUrl(it);
+    const atts = it.attachments || [];
+    const attachCol = atts.length ? `
+      <div class="t-attach-col">
+        ${atts.map(a => a.type==='pdf'
+          ? `<div class="attach-thumb pdf" data-att="${a.id}">PDF</div>`
+          : `<img class="attach-thumb" src="${a.dataUrl}" data-att="${a.id}" alt="${escapeAttr(a.name)}">`
+        ).join('')}
+      </div>` : '';
+    row.innerHTML = `
+      <div class="t-rail"><div class="dot"></div><div class="line"></div></div>
+      <div class="t-body">
+        <div class="t-time">${timeRangeLabel(it)}</div>
+        <div class="t-title">${escapeHtml(itemLabel(it))}</div>
+        ${it.memo ? `<div class="t-memo">${escapeHtml(it.memo)}</div>` : ''}
+        ${mapUrl ? `<a class="t-map" href="${mapUrl}" target="_blank" rel="noopener">🧭 길찾기</a>` : ''}
+        <div class="t-actions">
+          <button class="t-edit" data-id="${it.id}">수정</button>
+          <button class="t-del" data-id="${it.id}">삭제</button>
+        </div>
+      </div>
+      ${attachCol}`;
+    row.querySelector('.t-edit').addEventListener('click', ()=>{
+      openItemFormForEdit(it);
+    });
+    row.querySelector('.t-del').addEventListener('click', ()=>{
+      state.itinerary[currentDay] = state.itinerary[currentDay].filter(x=>x.id!==it.id);
+      if(editingItemId===it.id){ editingItemId=null; clearItemForm(); document.getElementById('itemForm').style.display='none'; }
+      saveState(); renderItinerary();
+    });
+    row.querySelectorAll('[data-att]').forEach(el=>{
+      el.addEventListener('click', ()=>{
+        const att = atts.find(a=>a.id===el.dataset.att);
+        if(att) openAttachment(att);
+      });
+    });
+    tl.appendChild(row);
+  });
+}
+
+function itemLabel(it){
+  // backward compatible with older entries saved as {title}
+  if(it.to){
+    return it.from ? `${it.from} → ${it.to}` : it.to;
+  }
+  return it.title || '';
+}
+
+function directionsUrl(it){
+  if(!it.to) return '';
+  const params = new URLSearchParams();
+  params.set('api', '1');
+  if(it.from) params.set('origin', it.from);
+  params.set('destination', it.to);
+  return 'https://www.google.com/maps/dir/?' + params.toString();
+}
+
+function formatTime24(t){
+  if(!t) return '00:00';
+  const [h,m] = t.split(':');
+  return String(h).padStart(2,'0') + ':' + String(m||'0').padStart(2,'0');
+}
+
+function readTimeInputs(hourId, minId){
+  const hourRaw = document.getElementById(hourId).value;
+  const minRaw = document.getElementById(minId).value;
+  if(hourRaw==='' && minRaw==='') return '';
+  const hour = Math.min(23, Math.max(0, parseInt(hourRaw,10) || 0));
+  const min = Math.min(59, Math.max(0, parseInt(minRaw,10) || 0));
+  return String(hour).padStart(2,'0') + ':' + String(min).padStart(2,'0');
+}
+
+function timeRangeLabel(it){
+  const from = it.fromTime || it.time || '';
+  const to = it.toTime || '';
+  if(from && to) return `${formatTime24(from)} – ${formatTime24(to)}`;
+  if(from) return formatTime24(from);
+  return '--:--';
+}
+
+document.getElementById('btnAddItem').addEventListener('click', ()=>{
+  editingItemId = null;
+  pendingAttachments = [];
+  clearItemForm();
+  setItemFormMode();
+  document.getElementById('itemForm').style.display='block';
+  document.getElementById('f-from-hour').focus();
+});
+document.getElementById('f-cancel').addEventListener('click', ()=>{
+  document.getElementById('itemForm').style.display='none';
+  editingItemId = null;
+  pendingAttachments = [];
+  clearItemForm();
+});
+document.getElementById('f-save').addEventListener('click', ()=>{
+  const fromTime = readTimeInputs('f-from-hour','f-from-min') || '00:00';
+  const toTime = readTimeInputs('f-to-hour','f-to-min');
+  const from = document.getElementById('f-from').value.trim();
+  const to = document.getElementById('f-to').value.trim();
+  const memo = document.getElementById('f-memo').value.trim();
+  if(!to){ document.getElementById('f-to').focus(); return; }
+  if(!state.itinerary[currentDay]) state.itinerary[currentDay] = [];
+  const attachments = pendingAttachments.slice();
+  if(editingItemId){
+    const list = state.itinerary[currentDay];
+    const idx = list.findIndex(x=>x.id===editingItemId);
+    if(idx>-1){
+      list[idx] = {id:editingItemId, fromTime, toTime, from, to, memo, attachments};
+    }
+    editingItemId = null;
+  } else {
+    state.itinerary[currentDay].push({id:uid(), fromTime, toTime, from, to, memo, attachments});
+  }
+  pendingAttachments = [];
+  saveState();
+  clearItemForm();
+  setItemFormMode();
+  document.getElementById('itemForm').style.display='none';
+  renderItinerary();
+});
+function clearItemForm(){
+  document.getElementById('f-from-hour').value='';
+  document.getElementById('f-from-min').value='';
+  document.getElementById('f-to-hour').value='';
+  document.getElementById('f-to-min').value='';
+  document.getElementById('f-from').value='';
+  document.getElementById('f-to').value='';
+  document.getElementById('f-memo').value='';
+  document.getElementById('f-files').value='';
+  renderAttachPreview();
+}
+function setItemFormMode(){
+  const saveBtn = document.getElementById('f-save');
+  saveBtn.textContent = editingItemId ? '수정 완료' : '저장';
+}
+function openItemFormForEdit(it){
+  editingItemId = it.id;
+  pendingAttachments = (it.attachments || []).map(a=>({...a}));
+  const fromT = (it.fromTime || it.time || '').split(':');
+  const toT = (it.toTime || '').split(':');
+  document.getElementById('f-from-hour').value = fromT[0] || '';
+  document.getElementById('f-from-min').value = fromT[1] || '';
+  document.getElementById('f-to-hour').value = it.toTime ? (toT[0]||'') : '';
+  document.getElementById('f-to-min').value = it.toTime ? (toT[1]||'') : '';
+  document.getElementById('f-from').value = it.from || '';
+  document.getElementById('f-to').value = it.to || it.title || '';
+  document.getElementById('f-memo').value = it.memo || '';
+  document.getElementById('f-files').value = '';
+  renderAttachPreview();
+  setItemFormMode();
+  document.getElementById('itemForm').style.display='block';
+  document.getElementById('itemForm').scrollIntoView({behavior:'smooth', block:'nearest'});
+}
+
+/* ---------- ATTACHMENTS ---------- */
+const MAX_IMAGE_DIM = 1280;
+const MAX_PDF_BYTES = 3 * 1024 * 1024; // 3MB
+
+function readFileAsDataURL(file){
+  return new Promise((resolve, reject)=>{
+    const reader = new FileReader();
+    reader.onload = ()=> resolve(reader.result);
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
+
+function compressImage(file){
+  return new Promise((resolve, reject)=>{
+    const reader = new FileReader();
+    reader.onload = ()=>{
+      const img = new Image();
+      img.onload = ()=>{
+        try{
+          let {width, height} = img;
+          if(width > MAX_IMAGE_DIM || height > MAX_IMAGE_DIM){
+            const scale = MAX_IMAGE_DIM / Math.max(width, height);
+            width = Math.round(width*scale);
+            height = Math.round(height*scale);
+          }
+          const canvas = document.createElement('canvas');
+          canvas.width = width; canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, width, height);
+          resolve(canvas.toDataURL('image/jpeg', 0.75));
+        }catch(err){ reject(err); }
+      };
+      img.onerror = ()=> reject(new Error('이미지를 불러올 수 없어요'));
+      img.src = reader.result;
+    };
+    reader.onerror = ()=> reject(new Error('파일을 읽을 수 없어요'));
+    reader.readAsDataURL(file);
+  });
+}
+
+function handleImageFile(file){
+  return compressImage(file).catch(err=>{
+    console.warn('이미지 압축 실패, 원본으로 첨부합니다', err);
+    return readFileAsDataURL(file);
+  });
+}
+
+document.getElementById('f-files').addEventListener('change', async (e)=>{
+  const files = Array.from(e.target.files || []);
+  for(const file of files){
+    const isPdf = file.type === 'application/pdf' || /\.pdf$/i.test(file.name);
+    const isImage = file.type.startsWith('image/') || /\.(jpe?g|png|gif|webp|heic|heif|bmp)$/i.test(file.name);
+    try{
+      if(isPdf){
+        if(file.size > MAX_PDF_BYTES){
+          alert(`"${file.name}" 파일이 너무 커요 (3MB 이하 권장). 건너뜁니다.`);
+          continue;
+        }
+        const dataUrl = await readFileAsDataURL(file);
+        pendingAttachments.push({id:uid(), name:file.name, type:'pdf', dataUrl});
+      } else if(isImage){
+        const dataUrl = await handleImageFile(file);
+        pendingAttachments.push({id:uid(), name:file.name, type:'image', dataUrl});
+      } else {
+        alert(`"${file.name}"은(는) 지원하지 않는 파일 형식이에요. 이미지나 PDF 파일을 선택해주세요.`);
+      }
+    }catch(err){
+      console.error('첨부 실패', file.name, err);
+      alert(`"${file.name}" 파일을 처리하지 못했어요. (${err && err.message ? err.message : '알 수 없는 오류'})`);
+    }
+  }
+  e.target.value = '';
+  renderAttachPreview();
+});
+
+function renderAttachPreview(){
+  const wrap = document.getElementById('f-attach-preview');
+  wrap.innerHTML = '';
+  pendingAttachments.forEach(a=>{
+    const el = document.createElement('div');
+    el.className = 'attach-preview-item';
+    el.innerHTML = a.type==='pdf'
+      ? `<div class="ph-pdf">PDF</div><button class="rm" type="button">×</button>`
+      : `<img src="${a.dataUrl}" alt="${escapeAttr(a.name)}"><button class="rm" type="button">×</button>`;
+    el.querySelector('.rm').addEventListener('click', ()=>{
+      pendingAttachments = pendingAttachments.filter(x=>x.id!==a.id);
+      renderAttachPreview();
+    });
+    wrap.appendChild(el);
+  });
+}
+
+function openAttachment(att){
+  fetch(att.dataUrl)
+    .then(res=>res.blob())
+    .then(blob=>{
+      const url = URL.createObjectURL(blob);
+      window.open(url, '_blank');
+    })
+    .catch(()=>{ window.open(att.dataUrl, '_blank'); });
+}
+
+/* ---------- EXPENSES ---------- */
+function fillPayerAndSplit(){
+  const payerSel = document.getElementById('e-payer');
+  payerSel.innerHTML = state.participants.map(p=>`<option value="${p.id}">${escapeHtml(p.name)}</option>`).join('');
+  const splitWrap = document.getElementById('e-split');
+  splitWrap.innerHTML = '';
+  state.participants.forEach(p=>{
+    const c = document.createElement('div');
+    c.className = 'chip on';
+    c.textContent = p.name;
+    c.dataset.id = p.id;
+    c.addEventListener('click', ()=> c.classList.toggle('on'));
+    splitWrap.appendChild(c);
+  });
+}
+
+function nameOf(id){
+  const p = state.participants.find(x=>x.id===id);
+  return p ? p.name : '(삭제된 인원)';
+}
+
+function renderExpenses(){
+  const total = state.expenses.reduce((s,e)=>s+Number(e.amount||0),0);
+  document.getElementById('totalAmount').textContent = yen(total);
+  document.getElementById('expCount').textContent = state.expenses.length ? `${state.expenses.length}건` : '';
+  const list = document.getElementById('expList');
+  list.innerHTML = '';
+  if(state.expenses.length===0){
+    list.innerHTML = '<div class="empty">등록된 경비가 없어요.</div>';
+    return;
+  }
+  const sorted = state.expenses.slice().sort((a,b)=> a.day - b.day);
+  sorted.forEach(e=>{
+    const row = document.createElement('div');
+    row.className = 'exp-row';
+    const splitNames = (e.splitIds||[]).map(nameOf).join(', ');
+    row.innerHTML = `
+      <div class="exp-main">
+        <div class="exp-item">${escapeHtml(e.item)}</div>
+        <div class="exp-meta">${DAY_LABELS[e.day]} · ${escapeHtml(nameOf(e.payerId))} 결제 · ${escapeHtml(splitNames)} 분담</div>
+      </div>
+      <div class="exp-right">
+        <div class="exp-amount">${yen(e.amount)}</div>
+        <button class="exp-del" data-id="${e.id}">삭제</button>
+      </div>`;
+    row.querySelector('.exp-del').addEventListener('click', ()=>{
+      state.expenses = state.expenses.filter(x=>x.id!==e.id);
+      saveState(); renderExpenses();
+    });
+    list.appendChild(row);
+  });
+}
+
+document.getElementById('btnAddExp').addEventListener('click', ()=>{
+  fillPayerAndSplit();
+  document.getElementById('expForm').style.display='block';
+  document.getElementById('e-item').focus();
+});
+document.getElementById('e-cancel').addEventListener('click', ()=>{
+  document.getElementById('expForm').style.display='none';
+  document.getElementById('e-item').value=''; document.getElementById('e-amount').value='';
+});
+document.getElementById('e-save').addEventListener('click', ()=>{
+  const day = Number(document.getElementById('e-day').value);
+  const item = document.getElementById('e-item').value.trim();
+  const amount = Number(document.getElementById('e-amount').value);
+  const payerId = document.getElementById('e-payer').value;
+  const splitIds = Array.from(document.querySelectorAll('#e-split .chip.on')).map(c=>c.dataset.id);
+  if(!item || !amount || amount<=0 || splitIds.length===0){
+    if(!item) document.getElementById('e-item').focus();
+    else if(!amount || amount<=0) document.getElementById('e-amount').focus();
+    return;
+  }
+  state.expenses.push({id:uid(), day, item, amount, payerId, splitIds});
+  saveState();
+  document.getElementById('e-item').value=''; document.getElementById('e-amount').value='';
+  document.getElementById('expForm').style.display='none';
+  renderExpenses();
+});
+
+/* ---------- SETTLEMENT ---------- */
+function renderSettlement(){
+  document.getElementById('peopleList').textContent = '인원: ' + state.participants.map(p=>p.name).join(', ');
+
+  // compute balances
+  const balance = {};
+  state.participants.forEach(p=> balance[p.id]=0);
+  state.expenses.forEach(e=>{
+    const amt = Number(e.amount||0);
+    const ids = (e.splitIds||[]).filter(id=>balance.hasOwnProperty(id));
+    if(ids.length===0) return;
+    const share = amt / ids.length;
+    if(balance.hasOwnProperty(e.payerId)) balance[e.payerId] += amt;
+    ids.forEach(id=>{ balance[id] -= share; });
+  });
+
+  const balList = document.getElementById('balanceList');
+  balList.innerHTML = '';
+  if(state.participants.length===0){
+    balList.innerHTML = '<div class="empty">인원을 먼저 추가해주세요.</div>';
+  } else {
+    const maxAbs = Math.max(1, ...state.participants.map(p=>Math.abs(balance[p.id]||0)));
+    state.participants.forEach(p=>{
+      const v = balance[p.id]||0;
+      const pct = Math.min(50, Math.abs(v)/maxAbs*50);
+      const row = document.createElement('div');
+      row.className = 'balance-row';
+      row.innerHTML = `
+        <div class="balance-top">
+          <span class="name">${escapeHtml(p.name)}</span>
+          <span class="val ${v>=0?'plus':'minus'}">${v>=0? '+':'-'}${yen(Math.abs(v))}</span>
+        </div>
+        <div class="bar-track">
+          <div class="bar-fill ${v>=0?'plus':'minus'}" style="width:${pct}%"></div>
+        </div>`;
+      balList.appendChild(row);
+    });
+  }
+
+  // debt simplification (greedy)
+  const creditors = [], debtors = [];
+  state.participants.forEach(p=>{
+    const v = Math.round((balance[p.id]||0)*100)/100;
+    if(v>0.5) creditors.push({id:p.id, name:p.name, amt:v});
+    else if(v<-0.5) debtors.push({id:p.id, name:p.name, amt:-v});
+  });
+  creditors.sort((a,b)=>b.amt-a.amt);
+  debtors.sort((a,b)=>b.amt-a.amt);
+
+  const transfers = [];
+  let ci=0, di=0;
+  const cr = creditors.map(c=>({...c})), db = debtors.map(d=>({...d}));
+  while(ci<cr.length && di<db.length){
+    const pay = Math.min(cr[ci].amt, db[di].amt);
+    if(pay>0.5){
+      transfers.push({from:db[di].name, to:cr[ci].name, amt:pay});
+    }
+    cr[ci].amt -= pay; db[di].amt -= pay;
+    if(cr[ci].amt<=0.5) ci++;
+    if(db[di].amt<=0.5) di++;
+  }
+
+  const settleList = document.getElementById('settleList');
+  settleList.innerHTML = '';
+  if(transfers.length===0){
+    settleList.innerHTML = '<div class="empty">정산할 내역이 없어요.</div>';
+  } else {
+    transfers.forEach(t=>{
+      const row = document.createElement('div');
+      row.className = 'settle-arrow';
+      row.innerHTML = `<b>${escapeHtml(t.from)}</b><span class="arw">→</span><b>${escapeHtml(t.to)}</b><span class="amt">${yen(t.amt)}</span>`;
+      settleList.appendChild(row);
+    });
+  }
+}
+
+/* ---------- PEOPLE MODAL ---------- */
+document.getElementById('btnEditPeople').addEventListener('click', openPeopleModal);
+function openPeopleModal(){
+  renderPeopleRows();
+  document.getElementById('peopleModal').classList.add('show');
+}
+function renderPeopleRows(){
+  const wrap = document.getElementById('peopleRows');
+  wrap.innerHTML = '';
+  state.participants.forEach(p=>{
+    const row = document.createElement('div');
+    row.className = 'p-row';
+    row.innerHTML = `<input type="text" value="${escapeAttr(p.name)}" data-id="${p.id}"><button data-id="${p.id}">삭제</button>`;
+    row.querySelector('input').addEventListener('input', (e)=>{
+      const pp = state.participants.find(x=>x.id===p.id);
+      if(pp) pp.name = e.target.value;
+    });
+    row.querySelector('button').addEventListener('click', ()=>{
+      state.participants = state.participants.filter(x=>x.id!==p.id);
+      renderPeopleRows();
+    });
+    wrap.appendChild(row);
+  });
+}
+document.getElementById('btnAddPerson').addEventListener('click', ()=>{
+  state.participants.push({id:uid(), name:''});
+  renderPeopleRows();
+  const inputs = document.querySelectorAll('#peopleRows input');
+  if(inputs.length) inputs[inputs.length-1].focus();
+});
+document.getElementById('peopleDone').addEventListener('click', ()=>{
+  state.participants = state.participants.filter(p=>p.name && p.name.trim());
+  state.participants.forEach(p=> p.name = p.name.trim());
+  document.getElementById('peopleModal').classList.remove('show');
+  saveState();
+  renderExpenses();
+  renderSettlement();
+});
+document.getElementById('peopleModal').addEventListener('click', (e)=>{
+  if(e.target.id==='peopleModal') document.getElementById('peopleModal').classList.remove('show');
+});
+
+/* ---------- utils ---------- */
+function escapeHtml(str){
+  const d = document.createElement('div');
+  d.textContent = str||'';
+  return d.innerHTML;
+}
+function escapeAttr(str){ return escapeHtml(str).replace(/"/g,'&quot;'); }
+
+function renderAll(){
+  renderItinerary();
+  renderExpenses();
+  renderSettlement();
+}
+
+loadState();
+</script>
+</body>
+</html>
