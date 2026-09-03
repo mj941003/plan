@@ -765,6 +765,7 @@
         <input type="text" id="ck-input" placeholder="예: 여권, 환전, 유심 구매">
         <button class="btn primary" id="ck-add">추가</button>
       </div>
+      <button class="add-btn" id="ck-preset" style="margin-top:10px;">✈️ 여행 준비물 추천 목록 추가</button>
     </main>
   </section>
 
@@ -1330,6 +1331,30 @@ function addChecklistItem(){
 document.getElementById('ck-add').addEventListener('click', addChecklistItem);
 document.getElementById('ck-input').addEventListener('keydown', (e)=>{
   if(e.key==='Enter'){ e.preventDefault(); addChecklistItem(); }
+});
+
+const PRESET_CHECKLIST = [
+  '여권', '여권 사본/사진 찍어두기', '항공권 e티켓 확인',
+  '엔화 환전', '유심 또는 포켓와이파이', '해외결제 가능한 카드',
+  '보조배터리', '충전기 및 케이블', '여행자 보험 가입',
+  '겉옷 (11월 저녁 쌀쌀함 대비)', '우산 또는 우비', '편한 신발',
+  '상비약', '세면도구/화장품', '카메라'
+];
+document.getElementById('ck-preset').addEventListener('click', ()=>{
+  if(!state.checklist) state.checklist = [];
+  const existing = new Set(state.checklist.map(c=>c.text.trim().toLowerCase()));
+  let added = 0;
+  PRESET_CHECKLIST.forEach(text=>{
+    if(!existing.has(text.toLowerCase())){
+      state.checklist.push({id:uid(), text, done:false});
+      existing.add(text.toLowerCase());
+      added++;
+    }
+  });
+  if(added>0){
+    saveState();
+    renderChecklist();
+  }
 });
 
 /* ---------- EXPENSES ---------- */
